@@ -230,7 +230,7 @@ namespace udemyMVC.Controllers
                 {
                     Viaje oViaje = bd.Viaje.Where(p => p.IIDVIAJE == idViaje).First();
                     oViaje.BHABILITADO = 0;
-                   // res = bd.SaveChanges();
+                   res = bd.SaveChanges();
                 }
             } catch (Exception e) { }
             return res;
