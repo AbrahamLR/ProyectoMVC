@@ -1,0 +1,64 @@
+﻿@using udemyMVC.Models
+@model EmpleadoCLS
+@{
+    ViewBag.Title = "Editar";
+    List<SelectListItem> listaSexo = (List<SelectListItem>)ViewBag.listaSexo;
+    List<SelectListItem> listaUsuario = (List<SelectListItem>)ViewBag.listaContrato;
+    List<SelectListItem> listaContrato = (List<SelectListItem>)ViewBag.listaUsuario;
+
+}
+
+<h2>Editar</h2>
+<div class="row">
+<div class="col-md-6">
+    @using (Html.BeginForm("Editar", "Empleado", FormMethod.Post))
+    {
+        <div>
+            @Html.LabelFor(p => p.idempleado)
+           
+        </div>
+        <div>
+            @Html.LabelFor(p => p.nombre)
+            @Html.TextBoxFor(p => p.nombre, new { @class = "form-control" })
+            @Html.ValidationMessage("nombre", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.apaterno)
+            @Html.TextBoxFor(p => p.apaterno, new { @class = "form-control" })
+            @Html.ValidationMessage("apaterno", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.amaterno)
+            @Html.TextBoxFor(p => p.amaterno, new { @class = "form-control" })
+            @Html.ValidationMessage("amaterno", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.fechaContrato)
+            @Html.EditorFor(p => p.fechaContrato, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessage("fechaContrato", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.sueldo)
+            @Html.TextBoxFor(p => p.sueldo, new { @class = "form-control" })
+            @Html.ValidationMessage("sueldo", new { @class = "text-danger" })
+        </div>
+
+        <div>
+            @Html.LabelFor(p => p.idtipoUsuario)
+            @Html.DropDownList("idtipoUsuario", listaUsuario, null, new { @class = "form-control" })
+            @Html.ValidationMessage("idtipoUsuario", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.idtipoContrato)
+            @Html.DropDownList("idtipoContrato", listaContrato, null, new { @class = "form-control" })
+            @Html.ValidationMessage("idtipoContrato", new { @class = "text-danger" })
+        </div>
+        <div>
+            @Html.LabelFor(p => p.idsexo)
+            @Html.DropDownList("idsexo", listaSexo, null, new { @class = "form-control" })
+            @Html.ValidationMessage("idsexo", new { @class = "text-danger" })
+        </div>
+        <input type="submit" value="Enviar" class="btn-primary" />
+    }
+</div>
+</div>

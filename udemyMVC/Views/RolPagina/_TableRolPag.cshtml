@@ -1,0 +1,33 @@
+﻿@using udemyMVC.Models
+@model List<RolPaginaCLS>
+
+<table class="table-bordered table-hover">
+    <thead>
+        <tr>
+            <td>@Html.LabelFor(p => Model[0].idRolPagina)</td>
+            <td>@Html.LabelFor(p => Model[0].nomRol)</td>
+            <td>@Html.LabelFor(p => Model[0].nomMensaje)</td>
+            <td>Operaciones</td>
+        </tr>
+    </thead> 
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.idRolPagina</td>
+            <td>@item.nomRol</td>
+            <td>@item.nomMensaje</td>
+            <td>
+                <button type="button" onclick="Editar(@item.idRolPagina)" class="btn btn-primary glyphicon glyphicon-edit" data-toggle="modal" data-target="#exampleModal">
+                    Editar
+                </button>
+            </td>
+            <td>
+                <button type="button" onclick="Eliminar(@item.idRolPagina)" class="btn btn-danger glyphicon glyphicon-trash" data-toggle="modal" data-target="#ModalElimina">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

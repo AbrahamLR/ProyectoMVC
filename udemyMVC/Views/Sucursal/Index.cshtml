@@ -1,0 +1,48 @@
+﻿@using udemyMVC.Models
+@model List<SucursalCLS>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+@Html.ActionLink("Agregar", "Agregar", "Sucursal", null, new { @class = "btn btn-primary" })
+@using (Html.BeginForm("Index", "Sucursal", FormMethod.Get, new { @id = "frmBuscar" }))
+{
+    @Html.Label("Ingrese sucursal:")
+    @Html.TextBox("nombre")
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td>@Html.LabelFor(p => Model[0].idSucursal)</td>
+                <td>@Html.LabelFor(p => Model[0].nombre)</td>
+                <td>@Html.LabelFor(p => Model[0].telefono)</td>
+                <td>@Html.LabelFor(p => Model[0].email)</td>
+                <td width="10%">Operaciones</td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.idSucursal</td>
+                    <td>@item.nombre</td>
+                    <td>@item.telefono</td>
+                    <td>@item.email</td>
+
+                    <td>
+                        @Html.ActionLink(" ", "Editar", "Sucursal", new { id = @item.idSucursal }, new { @class = "glyphicon glyphicon-edit bnt-primary" })  @*pasa el parametro id al editar*@
+                        @Html.ActionLink(" ", "Eliminar", "Sucursal", new { id = @item.idSucursal }, new { @class = "glyphicon glyphicon-trash btn-danger" })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+    <script>
+        var nom = document.getElementById("nombre");
+        nom.onkeyup = function () {
+            var buscar = document.getElementById("frmBuscar");
+            buscar.submit();
+        }
+    </script>

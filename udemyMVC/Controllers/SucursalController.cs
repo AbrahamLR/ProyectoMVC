@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using udemyMVC.Models;
+using udemyMVC.Filtros;
+
+namespace udemyMVC.Controllers
+{
+    [Acceder]
+    public class SucursalController : Controller
+    {
+        // GET: Sucursal
+        public ActionResult Index(SucursalCLS oSucursalCls)
+        {
+            List<SucursalCLS> listaSucursal = null;
+
+            string nombreSucursal = oSucursalCls.nombre;
+            using (var bd = new BDPasajeEntities())
+            {
+                if (oSucursalCls.nombre == null)
+                {
+                    listaSucursal = (from sucursal in bd.Sucursal
+                                     where sucursal.BHABILITADO == 1
+                                     select new SucursalCLS
+                                     {
+                                         idSucursal = sucursal.IIDSUCURSAL,
+                                         nombre = sucursal.NOMBRE,
+                                         telefono = sucursal.TELEFONO,
+                                         email = sucursal.EMAIL
+                                     }
+                                ).ToList();
+                }
+                else
+                {
+                    listaSucursal = (from sucursal in bd.Sucursal
+                                     where sucursal.BHABILITADO == 1 && sucursal.NOMBRE.Contains(nombreSucursal)
+                                     select new SucursalCLS
+                                     {
+                                         idSucursal = sucursal.IIDSUCURSAL,
+                                         nombre = sucursal.NOMBRE,
+                                         telefono = sucursal.TELEFONO,
+                                         email = sucursal.EMAIL
+                                     }
+                                ).ToList();
+                }
+            }          
+            
+            
+            
+                return View(listaSucursal);
+        }
+
+        public ActionResult Agregar()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Agregar(SucursalCLS oSucursalCLS)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(oSucursalCLS);
+            }
+            using (var bd = new BDPasajeEntities())
+            {
+                Sucursal oSucursal = new Sucursal();
+                oSucursal.NOMBRE = oSucursalCLS.nombre;
+                oSucursal.DIRECCION = oSucursalCLS.direccion;
+                oSucursal.TELEFONO = oSucursalCLS.telefono;
+                oSucursal.EMAIL = oSucursalCLS.email;
+                oSucursal.FECHAAPERTURA = oSucursalCLS.fechaApertura;
+                oSucursal.BHABILITADO = 1;
+                bd.Sucursal.Add(oSucursal);
+                bd.SaveChanges();
+
+            }
+                return RedirectToAction("Index");
+        }
+
+        public ActionResult Editar(int id)
+        {
+            SucursalCLS oSucursalCLS = new SucursalCLS();
+            using (var bd = new BDPasajeEntities())
+            {
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IIDSUCURSAL.Equals(id)).First();
+                oSucursalCLS.idSucursal = oSucursal.IIDSUCURSAL;
+                oSucursalCLS.nombre = oSucursal.NOMBRE;
+                oSucursalCLS.direccion = oSucursal.DIRECCION;
+                oSucursalCLS.telefono = oSucursal.TELEFONO;
+                oSucursalCLS.email = oSucursal.EMAIL;
+                oSucursalCLS.fechaApertura = (DateTime)oSucursal.FECHAAPERTURA;
+            }
+                return View(oSucursalCLS);
+        }
+
+        [HttpPost]
+        public ActionResult Editar(SucursalCLS oScurusalCLS)
+        {
+            if (!ModelState.IsValid) { return View(oScurusalCLS); }
+            int idSucursal = oScurusalCLS.idSucursal;
+            using (var bd = new BDPasajeEntities())
+            {
+                Sucursal oSucursal = bd.Sucursal.Where(p => p.IIDSUCURSAL.Equals(idSucursal)).First();
+                oSucursal.NOMBRE = oScurusalCLS.nombre;
+                oSucursal.DIRECCION = oScurusalCLS.direccion;
+                oSucursal.EMAIL = oScurusalCLS.email;
+                oSucursal.FECHAAPERTURA = (DateTime)oScurusalCLS.fechaApertura;
+                oSucursal.TELEFONO = oScurusalCLS.telefono;
+                bd.SaveChanges();
+
+            }
+            return RedirectToAction("Index");
+        }
+    }
+}

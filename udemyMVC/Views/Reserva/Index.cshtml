@@ -1,0 +1,51 @@
+﻿@using udemyMVC.Models
+@model List<ReservaCLS>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<div style="display:grid;grid-template-columns: 1fr 1fr 1fr 1fr;
+grid-gap: 1em; grid-auto-rows:500px; margin-top: 1em;" id="divreserva">
+    @foreach (var reserva in Model)
+    {
+        <div id="@reserva.idviaje" style="border:1px solid #666; border-radius: 1px; padding:2px">
+            @{
+                string base64foto = Convert.ToBase64String(reserva.foto);
+                string extArchivo = Path.GetExtension(reserva.nombreArchivo).Substring(1);
+                string cadena = "data:image/" + extArchivo + ";base64," + base64foto;
+
+             }
+            <img src="@cadena" style="width:100%;height:auto" />
+            <div style="padding:1em; display:flex;justify-content:space-around">
+                <label>Origen: @reserva.lugarOrigen</label>
+                <label>Destino: @reserva.lugarDestino</label>
+            </div>
+            <div style="padding:1em">
+                <p>Placa bus : @reserva.nombreBus</p>
+                <p>Disponible : @reserva.asientos </p>
+                solicitar: <input id="txt_@reserva.idviaje" type="number" min="0" max="@reserva.asientos" />
+                <div >
+                    <button class="btn btn-primary" onclick="Reservar(@reserva.idviaje,@reserva.asientos)">Aceptar</button>
+                    <button class="btn btn-danger">Cancelar</button>
+                    
+                </div>
+            </div>
+           
+        </div>
+    }
+</div>
+<script>
+    function Reservar(idViaje, asientosDisp)
+    {
+        var numPasaje = document.getElementById("txt_" + idViaje).value;
+        if (numPasaje == "")
+        {
+            alert("No puede ingresar valor vacio");
+        }
+        if (numPasaje > asientosDisp)
+        {
+            alert("No puede solicitar más de lo disponible: " + asientosDisp);
+           }
+    }
+</script>

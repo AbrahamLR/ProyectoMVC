@@ -1,0 +1,76 @@
+﻿@model List<udemyMVC.Models.TipoUsuarioCLS>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm("Index","TipoUsuario",FormMethod.Post,new {@id="frmBusca" })) { 
+<table class="table table-bordered table-hover">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model[0].idTipoUsuario)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => Model[0].nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => Model[0].descripcion)
+        </th>
+        
+        <th>Operaciones</th>
+    </tr>
+    <tr>
+        <td>@Html.TextBox("idTipoUsuario",null,new {@class="form-control" })</td>
+        <td>@Html.TextBox("nombre", null, new { @class = "form-control" })</td>
+        <td>@Html.TextBox("descripcion", null, new { @class = "form-control" })</td>
+        <td></td>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.idTipoUsuario)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.nombre)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.descripcion)
+        </td>
+        
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+}
+
+</table>
+}
+
+<script>
+    var idTipoUsuario = document.getElementById("idTipoUsuario");
+    var nombre = document.getElementById("nombre");
+    var descripcion = document.getElementById("descripcion");
+    var frmbuscar = document.getElementById("frmBusca");
+
+    idTipoUsuario.onkeyup = function ()
+    {
+        frmbuscar.submit();
+    }
+    nombre.onkeyup = function ()
+    {
+        frmbuscar.submit();
+    }
+    descripcion.onkeyup = function ()
+    {
+        frmbuscar.submit();
+    }
+
+</script>

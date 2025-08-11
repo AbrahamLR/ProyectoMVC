@@ -1,0 +1,155 @@
+﻿@model List<udemyMVC.Models.PaginaCLS>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<!-- Button trigger modal -->
+<button type="button" onclick="Agregar()" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Agregar
+</button>
+<p>
+    @using (Ajax.BeginForm("Filtro", "", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divPag", InsertionMode = InsertionMode.Replace }, new { @id = "frmFiltro" }))
+    {
+        @Html.Label("Ingrese mensaje")
+        @Html.TextBox("mensajeText")
+        <input type="submit" value="Buscar" class="btn-primary" />
+        <div id="divPag">
+            @Html.Partial("_TablaPagina", Model)
+        </div>
+    }
+
+</p>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalElimina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">¿Desea Eliminar el registro?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div style="padding:1em">
+                <button type="button" id="btnElimCerrar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="EliminarReg()" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Registro</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Ajax.BeginForm("Guardar", "Pagina", null, new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "divError",
+                InsertionMode = InsertionMode.Replace,
+                OnSuccess = "Guardar"
+            }))
+            {
+                @Html.Hidden("titulo")
+                <div class="modal-body">
+
+                    <div>
+                        @Html.Label("Mensaje link")
+                        @Html.TextBox("mensaje", null, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Acción")
+                        @Html.TextBox("accion", null, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Controlador")
+                        @Html.TextBox("controlador", null, new { @class = "form-control" })
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+                <div id="divError"></div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var frmFiltro = document.getElementById("frmFiltro");
+    var mensaje = document.getElementById("mensaje");
+    mensaje.onkeyup = function () {
+        $("#frmFiltro").trigger("submit");
+        //sin el michi no funciona
+    }
+
+    function limpiar() {
+        var controles = document.getElementsByClassName("form-control");
+        var control;
+        for (var i = 0; i < controles.length; i++) {
+            control = controles[i];
+            control.value = "";
+        }
+    }
+
+    function Agregar() {
+        limpiar();
+        document.getElementById("titulo").value = "-1"
+    }
+    function Guardar(res) {
+        if (res == "1" || res == "0") {
+            document.getElementById("btnClose").click();
+            alert("Registro guardado");
+            $("#frmFiltro").trigger("submit");
+        }
+        else {
+            if (res == "-1") {
+                alert("Ya existe registro");
+                document.getElementById("error").innerHTML = "";
+            } else
+            {
+                alert("No se pudo guardar el registro");
+            }
+            
+        }
+    }
+    function Editar(idPagina) {
+        limpiar();
+        document.getElementById("titulo").value = idPagina;
+        $.get("Pagina/Editar/?idPag=" + idPagina, function (data) {
+            document.getElementById("mensaje").value = data.mensaje;
+            document.getElementById("accion").value = data.accion;
+            document.getElementById("controlador").value = data.controlador;
+        })
+        
+    }
+
+    function Eliminar(idPag)
+    {
+        document.getElementById("titulo").value = idPag;
+    }
+
+    function EliminarReg() {
+        var idpagina = document.getElementById("titulo").value;
+        $.get("Pagina/Eliminar/?idPagina=" + idpagina, function (data) {
+            if (data == 1) {
+                alert("Registro eliminado");
+                $("#frmFiltro").trigger("submit");
+                document.getElementById("btnElimCerrar").click()
+            }
+        })
+    }
+
+</script>
+

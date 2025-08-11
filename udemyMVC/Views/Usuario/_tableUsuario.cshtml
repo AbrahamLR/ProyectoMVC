@@ -1,0 +1,37 @@
+﻿@using udemyMVC.Models
+@model List<UsuarioCLS>
+<table class="table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Tipo empleado</th>
+            <th>Operaciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.idUsuario</td>
+            <td>@item.nombrePersona</td>
+            <td>@item.NomUsuario</td>
+            <td>@item.nombreRol</td>
+            <td>@item.nomtipoEmpleado</td>
+            <td>
+                <button type="button" onclick="Editar(@item.idUsuario)" class="btn btn-primary glyphicon glyphicon-edit" data-toggle="modal" data-target="#exampleModal">
+                    Editar
+                </button>
+            </td>
+            <td>
+                <button type="button" onclick="Eliminar(@item.idUsuario)" class="btn btn-danger glyphicon glyphicon-trash" data-toggle="modal" data-target="#ModalElimina">
+                    Eliminar
+                </button>
+            </td>
+
+        </tr>
+        }
+    </tbody>
+</table>

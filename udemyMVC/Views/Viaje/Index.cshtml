@@ -1,0 +1,187 @@
+﻿@using udemyMVC.Models
+@model List<ViajeCLS>
+@{
+    ViewBag.Title = "Index";
+    List<SelectListItem> listalugar = (List<SelectListItem>)ViewBag.listaLugar;
+    List<SelectListItem> listaBus = (List<SelectListItem>)ViewBag.listaBus;
+}
+
+<h2>Index</h2>
+<!-- Button trigger modal -->
+<button type="button" onclick="Agregar()" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Agregar
+</button>
+
+@using (Ajax.BeginForm("Filtro", "", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "divViaje", InsertionMode = InsertionMode.Replace }, new { @id = "frmFiltro" }))
+{
+    @Html.Label("Ingrese lugar destino:")
+    @Html.DropDownList("idLugarDestino", listalugar, new { @class = "form-control" })
+    <div id="divViaje">
+        @Html.Partial("_TableViaje", Model)
+    </div>
+}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Registro</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Ajax.BeginForm("Guardar", "Viaje", null, new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "error",
+                InsertionMode = InsertionMode.Replace,
+                OnSuccess = "Guardar"
+            }, new { enctype = "multipart/form-data" }))
+            {
+                @Html.Hidden("titulo")
+                <div class="modal-body">
+                    <div>
+                        @Html.Label("Lugar de origen")
+                        @Html.DropDownList("idOrigen", listalugar, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Lugar de destino")
+                        @Html.DropDownList("idDestino", listalugar, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Precio")
+                        @Html.Editor("precio", null, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                    </div>
+                    <div>
+                        @Html.Label("Fecha de viaje")
+                        @Html.Editor("fechaViaje", null, new { htmlAttributes = new { @class = "form-control", @type = "date" } })
+                    </div>
+                    <div>
+                        @Html.Label("Bus")
+                        @Html.DropDownList("idBus", listaBus, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Numero de Asientos")
+                        @Html.Editor("numeroAsientos", null, new { htmlAttributes = new { @class = "form-control", @type = "number" } })
+                    </div>
+                    <div>
+                        @Html.Label("Foto")
+                        <img width="150" height="150" id="idFoto" style="display:block" />
+                        @Html.TextBox("Foto", "", new { type = "file", id = "fupFoto" })
+                    </div>
+                    <div>
+                        @Html.Hidden("nomFoto")
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            }
+            <div id="error"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="ModalElimina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">¿Desea eliminar registro?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div style="padding:1em">
+                <button type="button" id="btnCancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="EliminaConfirm()" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    var idLugar = document.getElementById("idLugarDestino");
+    idLugar.onchange = function () { $("#frmFiltro").trigger("submit"); }
+
+    function limpiar() {
+        var controles = document.getElementsByClassName("form-control");
+        var control;
+        for (var i = 0; i < controles.length; i++) {
+            control = controles[i];
+            control.value = "";
+        }
+        document.getElementById("idFoto").src = "";
+        document.getElementById("error").innerHTML = "";
+    }
+
+    function Agregar() {
+        limpiar();
+        document.getElementById("titulo").value = -1;
+    }
+
+    function Editar(idViaje) {
+        limpiar();
+        document.getElementById("titulo").value = idViaje;
+
+        $.get("Viaje/RecuperaInfo/?idViaje=" + idViaje, function (data) {
+            document.getElementById("idOrigen").value = data.idOrigen;
+            document.getElementById("idDestino").value = data.idOrigen;
+            document.getElementById("precio").value = data.precio;
+            document.getElementById("fechaViaje").value = data.fechaViajeCadena;
+            document.getElementById("idBus").value = data.idBus;
+            document.getElementById("numeroAsientos").value = data.numeroAsientos;
+            document.getElementById("idFoto").src = "data:image/" + data.extension + ";base64," + data.fotoCadena;
+
+        })
+
+    }
+
+    var imgFoto = document.getElementById("idFoto");
+    var fupFoto = document.getElementById("fupFoto");
+    fupFoto.onchange = function () {
+        var files = fupFoto.files[0];
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            imgFoto.src = reader.result;
+            document.getElementById("nomFoto").value = files.name;
+        }
+        reader.readAsDataURL(files);
+
+    }
+
+    function Guardar(resp) {
+        if (resp == "1") {
+            alert("Registro guardado");
+            document.getElementById("btnClose").click();
+            $("#frmFiltro").trigger("submit");
+        } else {
+            alert("Ocurrio un error");
+        }
+    }
+
+    function Eliminar(idViaje)
+    {
+        document.getElementById("titulo").value = idViaje;
+    }
+
+    function EliminaConfirm()
+    {
+        var titulo = document.getElementById("titulo").value;
+        $.get("Viaje/Eliminar/?idViaje=" + titulo, function (data) {
+            if (data == 1) {
+                alert("Registro eliminado");
+                document.getElementById("btnCancelar").click();
+                $("#frmFiltro").trigger("submit");
+            } else
+            {
+                alert("Ocurrio un error");
+            }
+        })
+    }
+
+</script>

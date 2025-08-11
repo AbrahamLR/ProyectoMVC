@@ -1,0 +1,81 @@
+﻿@using udemyMVC.Models
+@model List<ClienteCLS>
+@{
+    ViewBag.Title = "Index";
+    List<SelectListItem> listaSexo = (List<SelectListItem>)ViewBag.lista;
+}
+
+<h2>Index</h2>
+@Html.ActionLink("Agregar", "Agregar", "Cliente", null, new { @class = "btn btn-primary" })
+@using (Html.BeginForm("Index","Cliente",FormMethod.Get))
+{
+    @Html.Label("Ingrese sexo:")
+    @Html.DropDownList("idsexo", listaSexo)
+    <input type="submit" value="Buscar" class="btn-success" />
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <td>@Html.LabelFor(p => Model[0].idcliente)</td>
+                <td>@Html.LabelFor(p => Model[0].nombre)</td>
+                <td>@Html.LabelFor(p => Model[0].apePaterno)</td>
+                <td>@Html.LabelFor(p => Model[0].apeMaterno)</td>
+                <td>@Html.LabelFor(p => Model[0].direccion)</td>
+                <td>@Html.LabelFor(p => Model[0].email)</td>
+                <td>@Html.LabelFor(p => Model[0].telefono)</td>
+                <td width="10%">Operaciones</td>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.idcliente</td>
+                    <td>@item.nombre</td>
+                    <td>@item.apePaterno</td>
+                    <td>@item.apeMaterno</td>
+                    <td>@item.direccion</td>
+                    <td>@item.email</td>
+                    <td>@item.telefono</td>
+                    <td>
+                        @Html.ActionLink(" ", "Editar", "Cliente", new { id = @item.idcliente }, new { @class = "glyphicon glyphicon-edit bnt-primary" })  @*pasa el parametro id al editar*@
+                        @*@Html.ActionLink(" ", "Eliminar", "Cliente", new { id = @item.idcliente }, new { @class = "glyphicon glyphicon-trash btn-danger" })*@
+                        <button type="button" onclick="mostrarpop(@item.idcliente)" class="glyphicon glyphicon-trash btn-danger" data-toggle="modal" data-target="#exampleModal"></button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@using (Html.BeginForm("Eliminar", "Cliente", FormMethod.Post, new { @id = "frmEliminar" }))
+{
+    @Html.Hidden("idCliente");
+}
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">¿Desea eliminar cliente?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div style="padding:1em">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="Agregar()" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function mostrarpop(idcliente) {
+        document.getElementById("idCliente").value = idcliente;
+    }
+    function Agregar() {
+        var frmEliminar = document.getElementById("frmEliminar");
+        frmEliminar.submit();
+    }
+</script>

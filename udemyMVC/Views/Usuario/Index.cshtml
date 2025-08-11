@@ -1,0 +1,175 @@
+﻿@using udemyMVC.Models
+@model List<UsuarioCLS>
+@{
+    ViewBag.Title = "Index";
+    List<SelectListItem> listaPersona = (List<SelectListItem>)ViewBag.listaPersona;
+    List<SelectListItem> listaRol = (List<SelectListItem>)ViewBag.listaRol;
+}
+
+<h2>Index</h2>
+<button type="button" onclick="Agregar()" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Agregar
+</button>
+@using (Ajax.BeginForm("Filtrar", "Usuario", null, new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "divUsr",
+    InsertionMode = InsertionMode.Replace
+
+}, new { @id = "frmFiltro" }))
+{
+    @Html.Label("Ingrese nombre:")
+    @Html.TextBox("nombrePersona", null, new { @class = "form-control" })
+    <div id="divUsr">
+        @Html.Partial("_tableUsuario", Model)
+    </div>      }
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Registro</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Ajax.BeginForm("Guardar", "Usuario", null, new AjaxOptions
+            {
+                HttpMethod = "POST",
+                UpdateTargetId = "error",
+                InsertionMode = InsertionMode.Replace,
+                OnSuccess = "Guardar"
+            }))
+            {
+                @Html.Hidden("titulo")
+                @Html.Hidden("nombrePersonaHD")
+                <div class="modal-body">
+
+                    <div>
+                        @Html.Label("Nombre usuario")
+                        @Html.TextBox("NomUsuario", null, new { @class = "form-control" })
+                    </div>
+                    <div id="divContra">
+                        @Html.Label("Contraseña")
+                        @Html.Password("contrasena", null, new { @class = "form-control" })
+                    </div>
+                    <div id="divPer">
+                        @Html.Label("Nombre Persona")
+                        @Html.DropDownList("iid", listaPersona, new { @class = "form-control" })
+                    </div>
+                    <div>
+                        @Html.Label("Nombre Rol")
+                        @Html.DropDownList("idRol", listaRol, new { @class = "form-control" })
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnClose" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            }
+            <div id="error"></div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="ModalElimina" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">¿Desea eliminar registro?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div style="padding:1em">
+                <button type="button" id="btnCancelar" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" onclick="EliminaConfirm()" class="btn btn-primary">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function Agregar()
+    {
+        limpiar();
+        document.getElementById("titulo").value = -1;
+        document.getElementById("divContra").style.display = "block";
+        document.getElementById("divPer").style.display = "block";
+        
+    }
+    var id = document.getElementById("iid");
+    id.onchange = function () { document.getElementById("nombrePersonaHD").value = id.options[id.selectedIndex].text; }   
+    var nom = document.getElementById("nombrePersona");
+    nom.onkeyup = function () {
+        $("#frmFiltro").trigger("submit");
+    }
+    function Editar(idUsu)
+    {
+        limpiar();
+        document.getElementById("titulo").value = idUsu;
+        document.getElementById("divContra").style.display = "none";
+        document.getElementById("divPer").style.display = "none";
+        
+        $.get("Usuario/recuperaInfo/?idUsuario=" + idUsu, function (data) {
+            document.getElementById("NomUsuario").value = data.NomUsuario;
+            document.getElementById("idRol").value = data.idRol;
+            document.getElementById("contrasena").value = 1;
+            document.getElementById("iid").value = 1;
+        })
+    }
+
+    function limpiar() {
+        var controles = document.getElementsByClassName("form-control");
+        var control;
+        for (var i = 0; i < controles.length; i++) {
+            control = controles[i];
+            control.value = "";
+        }
+        document.getElementById("error").innerHTML = "";
+    }
+
+    function Guardar(res)
+    {
+        if (res == "0" || res == "1" || res=="2") {
+            $("#frmFiltro").trigger("submit");
+            alert("Registro guardado");
+            document.getElementById("btnClose").click();
+        } else
+        {
+            if (res == "-1") {
+                alert("Ya existe un registro");
+                document.getElementById("error").innerHTML = "";
+            }
+            else
+            {
+                alert("Ocurrio un error");
+            }
+            
+        }
+    }
+
+    function Eliminar(idUsuario)
+    {
+        document.getElementById("titulo").value = idUsuario;
+    }
+    function EliminaConfirm()
+    {
+        var idUsu = document.getElementById("titulo").value;
+        $.get("Usuario/Eliminar/?idUsuario=" + idUsu, function (data) {
+            if (data == 1) {
+                $("#frmFiltro").trigger("submit");
+                alert("Registro eliminado");
+                document.getElementById("btnCancelar").click();
+            }
+            else
+            {
+                alert("Ocurrio un error");
+            }
+        })
+    }
+</script>
+

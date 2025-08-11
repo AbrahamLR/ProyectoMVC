@@ -1,0 +1,49 @@
+﻿@using udemyMVC.Models
+@model List<EmpleadoCLS>
+@{
+    ViewBag.Title = "Index";
+    List<SelectListItem> listaUsuario = (List<SelectListItem>)ViewBag.listaUsuario;
+}
+
+<h2>Index</h2>
+@Html.ActionLink("Agregar", "Agregar", "Empleado", null, new { @class = "btn btn-primary" })
+@using (Html.BeginForm("Index", "Empleado", FormMethod.Get, new {@id="frmBuscar" })) {
+@Html.Label("Selecciona tipo de usuario:")
+@Html.DropDownList("idtipoUsuario",listaUsuario)
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <td>@Html.LabelFor(p => Model[0].idempleado)</td>
+            <td>@Html.LabelFor(p => Model[0].nombre)</td>
+            <td>@Html.LabelFor(p => Model[0].apaterno)</td>
+            <td>@Html.LabelFor(p => Model[0].nombreTipoUsuario)</td>
+            <td>@Html.LabelFor(p => Model[0].nombreTipoContrato)</td>
+            <td width="10%">Operaciones</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@item.idempleado</td>
+            <td>@item.nombre</td>
+            <td>@item.apaterno</td>
+            <td>@item.nombreTipoUsuario</td>
+            <td>@item.nombreTipoContrato</td>
+            <td>
+                @Html.ActionLink(" ", "Editar", "Empleado", new { id = @item.idempleado }, new { @class = "glyphicon glyphicon-edit bnt-primary" })  @*pasa el parametro id al editar*@
+                @Html.ActionLink(" ", "Eliminar", "Empleado", new { id = @item.idempleado }, new { @class = "glyphicon glyphicon-trash btn-danger" })
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+}
+<script>
+    
+    var idTipoUsu = document.getElementById("idtipoUsuario");
+    idTipoUsu.onchange = function () {
+        var frmBus = document.getElementById("frmBuscar");
+        frmBus.submit();
+    }
+</script>

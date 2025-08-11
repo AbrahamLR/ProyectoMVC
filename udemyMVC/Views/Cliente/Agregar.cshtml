@@ -1,0 +1,88 @@
+﻿@using udemyMVC.Models
+@model  ClienteCLS
+@{
+    ViewBag.Title = "Agregar";
+    List<SelectListItem> listaSexo = (List<SelectListItem>)ViewBag.lista;
+}
+
+<h2>Agregar</h2>
+<div class="col-md-6">
+    <div>
+        @using (Html.BeginForm("Agregar", "Cliente", FormMethod.Post, new {@id="frmClient" }))
+        {
+            <div>
+                @Html.LabelFor(p => p.nombre)
+                @Html.TextBoxFor(p => p.nombre, new { @class = "form-control" })
+                @Html.ValidationMessage("nombre", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.apePaterno)
+                @Html.TextBoxFor(p => p.apePaterno, new { @class = "form-control" })
+                @Html.ValidationMessage("apePaterno", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.apeMaterno)
+                @Html.TextBoxFor(p => p.apeMaterno, new { @class = "form-control" })
+                @Html.ValidationMessage("apeMaterno", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.email)
+                @Html.TextBoxFor(p => p.email, new { @class = "form-control" })
+                @Html.ValidationMessage("email", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.direccion)
+                @Html.EditorFor(p => p.direccion, new { htmlattributes = new { @class = "form-control" } })
+                @Html.ValidationMessage("direccion", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.idsexo)
+                @Html.DropDownList("idsexo", listaSexo, null, new { @class = "form-control" })
+                @Html.ValidationMessage("idsexo", new { @class = "text-danger" })
+            </div>
+            <div>
+                @Html.LabelFor(p => p.telefono)
+                @Html.TextBoxFor(p => p.telefono, new { @class = "form-control" })
+                @Html.ValidationMessage("telefono", new { @class = "text-danger" })
+            </div>
+            <di>
+                @*<input type="submit" value="Agregar" class="btn btn-primary" />*@                
+            </di>
+
+
+
+        }
+    </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Guardar
+    </button>
+    @Html.ActionLink("Regresar","Index","Cliente",null,new {@class="btn btn-danger" })
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">¿Desea guardar los cambiis?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div style="padding:1em">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" onclick="Agregar()" class="btn btn-primary">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function Agregar()
+    {
+        var frmClient = document.getElementById("frmClient");
+        frmClient.submit();
+    }
+</script>

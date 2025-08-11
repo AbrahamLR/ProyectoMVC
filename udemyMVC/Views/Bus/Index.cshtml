@@ -1,0 +1,59 @@
+﻿@using udemyMVC.Models
+@model List<BusCLS>
+@{
+    ViewBag.Title = "Index";
+    List<SelectListItem> listatipobus = (List<SelectListItem>)ViewBag.listaTipoBus;
+    List<SelectListItem> listamarca = (List<SelectListItem>)ViewBag.listaMarca;
+    List<SelectListItem> listamodelo = (List<SelectListItem>)ViewBag.listaModelo;
+    List<SelectListItem> listaSucursal = (List<SelectListItem>)ViewBag.listaSucursal;
+}
+
+<h2>Index</h2>
+@Html.ActionLink("Agregar","Agregar","Bus",new {@class="btn btn-primary" })
+@using (Html.BeginForm("Index","Bus",FormMethod.Post,new {@id="frmBuscar" })) { 
+<table class="table table-hover table-bordered">
+    <thead>
+        <tr>
+            <td>@Html.LabelFor(p => Model[0].idBus)</td>
+            <td>@Html.LabelFor(p => Model[0].placa)</td>
+            <td>@Html.LabelFor(p => Model[0].nombreModelo)</td>
+            <td>@Html.LabelFor(p => Model[0].nombreSucursal)</td>
+            <td>@Html.LabelFor(p => Model[0].nombreTipoBus)</td>
+            <td>Operaciones</td>
+           
+        </tr>
+        <tr>
+            <td>@Html.TextBox("idBus",null,new {@class="form-control" })</td>
+            <td>@Html.TextBox("placa", null, new { @class = "form-control" })</td>
+            <td>@Html.DropDownList("idModelo", listamodelo, new { htmlAttributes = new { @class = "form-control" } })</td>
+            <td>@Html.DropDownList("idSucursal", listaSucursal, new { htmlAttributes = new { @class = "form-control" } })</td>
+            <td>@Html.DropDownList("idTipoBuspublic", listatipobus, new { htmlAttributes = new { @class = "form-control" } })</td>
+        </tr>
+    </thead>
+    <tbody>
+       @foreach (var item in Model)
+       {
+        <tr>
+            <td>@item.idBus</td>
+            <td>@item.placa</td>
+            <td>@item.nombreModelo</td>
+            <td>@item.nombreSucursal</td>
+            <td>@item.nombreTipoBus</td>
+            <td>
+                @Html.ActionLink(" ", "Editar", "Bus", new { id = @item.idBus }, new { @class = "glyphicon glyphicon-edit bnt-primary" })  @*pasa el parametro id al editar*@
+                @Html.ActionLink(" ", "Eliminar", "Bus", new { id = @item.idBus }, new { @class = "glyphicon glyphicon-trash btn-danger" })
+            </td>
+        </tr>
+       }
+    </tbody>
+</table>
+}
+<script>
+    var frmBuscar = document.getElementById("frmBuscar");
+    var controles = document.getElementsByClassName("form-control");
+    var ncontroles = controles.length;
+    for (var i = 0; i<ncontroles; i++)
+    {
+        controles[i].onchange = function () { frmBuscar.submit(); }
+    }
+</script>
